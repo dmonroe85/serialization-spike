@@ -1,0 +1,9 @@
+byte,Byte,scala.util.Random.nextInt.toByte,10
+short,Short,scala.util.Random.nextInt.toShort,10
+int,Integer,scala.util.Random.nextInt,10
+long,Long,scala.util.Random.nextLong,10
+bigInt,BigInt,scala.util.Random.nextLong,10
+float,Float,scala.util.Random.nextFloat,10
+double,Double,scala.util.Random.nextDouble,10
+bigDecimal,BigDecimal,scala.util.Random.nextDouble,10
+string,String,scala.util.Random.nextString(scala.util.Random.nextInt.toByte.abs),10

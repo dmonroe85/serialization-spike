@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "name": "simple",
+  "namespace": "memtest.domain",
+  "fields": [
+    { "name": "b", "type": "int" },
+    { "name": "s", "type": "int" },
+    { "name": "i", "type": "int" },
+    { "name": "l", "type": "int" },
+    { "name": "bi", "type": "bytes" },
+
+    { "name": "f", "type": "float" },
+    { "name": "d", "type": "double" },
+    { "name": "bd", "type": "bytes", "logicalType": "decimal", "precision": 20 },
+
+    { "name": "str", "type": "string" }
+  ]
+}
