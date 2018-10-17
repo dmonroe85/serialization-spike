@@ -47,8 +47,8 @@ public abstract class AbstractPacked {
     private byte[] payload;
 
     // Get / Set
-    protected void setPayload(byte[] newPayload) { payload = newPayload; }
-    protected byte[] getPayload() { return payload; }
+    public void setPayload(byte[] newPayload) { payload = newPayload; }
+    public byte[] getPayload() { return payload; }
 
 
     // Unpacking Methods

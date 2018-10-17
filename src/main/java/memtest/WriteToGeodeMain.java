@@ -1,8 +1,8 @@
 package memtest;
 
 import memtest.domain.Simple;
-import memtest.serializerfunctions.AbstractSerializer;
-import memtest.serializerfunctions.KryoSerializer;
+import memtest.domain.SimplePacked;
+import memtest.serializerfunctions.*;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientCacheFactory;
@@ -13,29 +13,29 @@ import java.io.IOException;
 public class WriteToGeodeMain {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        int numObjects = 10000;
+        int numObjects = 100000;
 
-        // Kryo: Starting Memory 72M + 94M, Ending Memory 130M + 313M
-        AbstractSerializer serializer = new KryoSerializer();
+        AbstractSerializer serializer = new SimplePackedSerializer();
 
         ClientCache cache = new ClientCacheFactory()
                 .addPoolLocator("localhost", 10334)
                 .create();
 
         Region<String, byte[]> region = cache
-                .<String, byte[]>createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY)
-                .create("hello");
+                .<String, byte[]>createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY_HEAP_LRU)
+                .create("hellop");
 
         for (int i = 0; i < numObjects; i ++) {
             Simple s = new Simple();
+            SimplePacked sp = new SimplePacked(s);
 
-            byte[] ba = serializer.serialize(s);
+            byte[] ba = serializer.serialize(sp);
             region.put(String.valueOf(i), ba);
             byte[] queried = region.get(String.valueOf(i));
 
-            Simple reconstructed = (Simple)serializer.deserialize(queried, Simple.class);
+            SimplePacked reconstructed = (SimplePacked)serializer.deserialize(queried, SimplePacked.class);
 
-            if (!s.equals(reconstructed)) {
+            if (!sp.equals(reconstructed)) {
                 System.out.println("Unequal!");
             }
         }
