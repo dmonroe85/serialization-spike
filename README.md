@@ -1,8 +1,10 @@
 # serialization-spike
 
 ## Commands
-gradle build
-gradle test
+
+`gradle build`
+
+`gradle test`
 
 ## Main Methods
 
