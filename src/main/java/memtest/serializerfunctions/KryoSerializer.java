@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class KryoSerializer implements SerializerInterface {
+public class KryoSerializer extends AbstractSerializer {
     private Kryo kryo;
 
     public KryoSerializer()  {

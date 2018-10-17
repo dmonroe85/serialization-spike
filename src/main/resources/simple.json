@@ -6,12 +6,12 @@
     { "name": "b", "type": "int" },
     { "name": "s", "type": "int" },
     { "name": "i", "type": "int" },
-    { "name": "l", "type": "int" },
+    { "name": "l", "type": "long" },
     { "name": "bi", "type": "bytes" },
 
     { "name": "f", "type": "float" },
     { "name": "d", "type": "double" },
-    { "name": "bd", "type": "bytes", "logicalType": "decimal", "precision": 20 },
+    { "name": "bd", "type": "bytes" },
 
     { "name": "str", "type": "string" }
   ]

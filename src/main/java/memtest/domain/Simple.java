@@ -1,16 +1,10 @@
 package memtest.domain;
 
-import memtest.common.ByteArray;
-import memtest.packing.PackingUtil;
 import memtest.common.Util;
-import org.apache.avro.Schema;
-import org.apache.avro.SchemaBuilder;
-import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.util.Random;
 
 public class Simple implements Serializable {
@@ -21,13 +15,11 @@ public class Simple implements Serializable {
     private short s = (short) r.nextInt();
     private int i = r.nextInt();
     private long l = r.nextLong();
-    private BigInteger bi =
-            new BigInteger((byte)r.nextInt(Byte.MAX_VALUE), r);
+    private BigInteger bi = new BigInteger(r.nextInt(Byte.MAX_VALUE), r);
     private float f = r.nextFloat();
     private double d = r.nextDouble();
     private BigDecimal bd = new BigDecimal(r.nextDouble());
-    private String str =
-            Util.newRandomString((byte)r.nextInt(Byte.MAX_VALUE));
+    private String str = Util.newRandomString(r.nextInt(Byte.MAX_VALUE));
 
     public byte getByte() { return b; }
     public short getShort() { return s; }
@@ -70,35 +62,16 @@ public class Simple implements Serializable {
         str = str_;
     }
 
-    public byte[] buildPayload(PackingUtil pu) {
-        ByteBuffer payload = ByteBuffer.allocate(1024);
-
-        payload.put(pu.byteToBytes(getByte()));
-        payload.put(pu.shortToBytes(getShort()));
-        payload.put(pu.intToBytes(getInt()));
-        payload.put(pu.longToBytes(getLong()));
-        payload.put(pu.bigIntegerToBytes(getBigInteger()));
-
-        payload.put(pu.floatToBytes(getFloat()));
-        payload.put(pu.doubleToBytes(getDouble()));
-        payload.put(pu.bigDecimalToBytes(getBigDecimal()));
-
-        payload.put(pu.stringToBytes(getString()));
-
-        int position = payload.position();
-        byte[] ba = payload.array();
-
-        return Util.byteArraySlice(ba, 0, position);
-    }
-
     @Override
     public int hashCode() { return super.hashCode(); }
 
     @Override
     public boolean equals(Object o) {
+        if (o == null) { return false; }
+
         if (o == this) { return true; }
 
-        if (!(o.getClass() == Simple.class)) { return false; }
+        if (!(o.getClass() == this.getClass())) { return false; }
 
         Simple that = (Simple)o;
 

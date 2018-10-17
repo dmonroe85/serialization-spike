@@ -6,59 +6,50 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class JavaSerializerSimpleByField implements SerializerInterface {
+public class JavaSerializerSimpleByField extends AbstractSerializer {
     @Override
-    public byte[] serialize(Object object) {
+    public byte[] serialize(Object object) throws IOException {
         Simple simple = (Simple)object;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
 
-            oos.writeByte(simple.getByte());
-            oos.writeShort(simple.getShort());
-            oos.writeInt(simple.getInt());
-            oos.writeLong(simple.getLong());
-            oos.writeObject(simple.getBigInteger());
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
 
-            oos.writeFloat(simple.getFloat());
-            oos.writeDouble(simple.getDouble());
-            oos.writeObject(simple.getBigDecimal());
+        oos.writeByte(simple.getByte());
+        oos.writeShort(simple.getShort());
+        oos.writeInt(simple.getInt());
+        oos.writeLong(simple.getLong());
+        oos.writeObject(simple.getBigInteger());
 
-            oos.writeUTF(simple.getString());
+        oos.writeFloat(simple.getFloat());
+        oos.writeDouble(simple.getDouble());
+        oos.writeObject(simple.getBigDecimal());
 
-            oos.close();
-        } catch (IOException e) {
-            e.fillInStackTrace();
-        }
+        oos.writeUTF(simple.getString());
+
+        oos.close();
 
         return baos.toByteArray();
     }
 
     @Override
-    public Object deserialize(byte[] ba, Class cls) {
+    public Object deserialize(byte[] ba, Class cls) throws IOException, ClassNotFoundException {
         Simple simple = null;
 
-        try {
-            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(ba));
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(ba));
 
-            byte b = ois.readByte();
-            short s = ois.readShort();
-            int i = ois.readInt();
-            long l = ois.readLong();
-            BigInteger bi = (BigInteger) ois.readObject();
-            float f = ois.readFloat();
-            double d = ois.readDouble();
-            BigDecimal bd = (BigDecimal) ois.readObject();
-            String str = ois.readUTF();
+        byte b = ois.readByte();
+        short s = ois.readShort();
+        int i = ois.readInt();
+        long l = ois.readLong();
+        BigInteger bi = (BigInteger) ois.readObject();
+        float f = ois.readFloat();
+        double d = ois.readDouble();
+        BigDecimal bd = (BigDecimal) ois.readObject();
+        String str = ois.readUTF();
 
-            ois.close();
+        ois.close();
 
-            simple = new Simple(b, s, i, l, bi, f, d, bd, str);
-        } catch (IOException e) {
-            e.fillInStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.fillInStackTrace();
-        }
+        simple = new Simple(b, s, i, l, bi, f, d, bd, str);
 
         return simple;
     }

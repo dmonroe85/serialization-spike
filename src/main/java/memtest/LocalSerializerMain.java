@@ -4,10 +4,12 @@ import memtest.domain.Simple;
 import memtest.domain.SimplePacked;
 import memtest.serializerfunctions.*;
 
+import java.io.IOException;
+
 public class LocalSerializerMain {
 
     private static void testSerializer(Object value,
-                                       SerializerInterface serializer) {
+                                       AbstractSerializer serializer) throws IOException {
         byte[] serialized = serializer.serialize(value);
         System.out.println(serializer.getClass().getName());
         System.out.println("Length: " + serialized.length + " bytes");
@@ -15,18 +17,20 @@ public class LocalSerializerMain {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         System.out.println("Testing Serialization Libraries");
         Simple s = new Simple();
 
-        testSerializer(s, new JavaSerializerWholeObject());
+        testSerializer(s, new JavaSerializerByReflection());
         testSerializer(s, new JavaSerializerSimpleByField());
 
-        testSerializer(s, new PdxSerializerWholeObject());
+        testSerializer(s, new PdxSerializerByReflection());
         testSerializer(s, new PdxSerializerSimpleByField());
 
-        testSerializer(s, new DataSerializerWholeObject());
+        testSerializer(s, new DataSerializerByReflection());
         testSerializer(s, new DataSerializerSimpleByField());
+
+        testSerializer(s, new AvroSerializerSimple());
 
         testSerializer(s, new KryoSerializer());
 

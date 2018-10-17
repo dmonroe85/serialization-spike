@@ -2,19 +2,20 @@ package memtest;
 
 import memtest.domain.Simple;
 import memtest.domain.SimplePacked;
-import memtest.packing.PackingUtil;
-import memtest.serializerfunctions.KryoSerializer;
+import memtest.serializerfunctions.AbstractSerializer;
+import memtest.serializerfunctions.HBaseValueEncoder;
 import org.openjdk.jol.info.ClassLayout;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public class EncodeSimpleTypesTest {
 
-    static PackingUtil pu = new PackingUtil(new KryoSerializer());
+    private static AbstractSerializer as = new HBaseValueEncoder();
 
-    private static void test(Object o, byte[] hba) {
-        byte[] kba = pu.serializer.serialize(o);
+    private static void test(Object o, byte[] hba) throws IOException {
+        byte[] kba = as.serialize(o);
 
         System.out.println(o.getClass().getName());
         System.out.println(ClassLayout.parseInstance(o).toPrintable());
@@ -36,7 +37,7 @@ public class EncodeSimpleTypesTest {
         System.out.println(ClassLayout.parseInstance(hba).toPrintable());
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         byte b = 124;
 //        test(b, pu.byteToBytes(b));
@@ -57,16 +58,17 @@ public class EncodeSimpleTypesTest {
 //        test(d, pu.doubleToBytes(d));
 
         BigInteger bi = new BigInteger("112341234112341234123421421342341234231423412341");
-        test(bi, pu.bigIntegerToBytes(bi));
+        test(bi, as.serialize(bi));
 
         BigDecimal bd = new BigDecimal("1.12341234112341234123421421342341234231423412341");
-        test(bd, pu.bigDecimalToBytes(bd));
+        test(bd, as.serialize(bd));
 
         String str = "sdfgsdfgsdfgsdfgs";
-        test(str, pu.stringToBytes(str));
+        test(str, as.serialize(str));
 
         Simple simple = new Simple(b, s, i, l, bi, f, d, bd, str);
-        test(simple, simple.buildPayload(pu));
+        SimplePacked simplePacked = new SimplePacked(simple);
+        test(simple, simplePacked.getPayload());
     }
 
 }

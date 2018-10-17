@@ -3,7 +3,7 @@ package memtest.serializerfunctions;
 import org.apache.geode.pdx.internal.PdxInputStream;
 import org.apache.geode.pdx.internal.PdxOutputStream;
 
-public class PdxSerializerWholeObject implements SerializerInterface {
+public class PdxSerializerByReflection extends AbstractSerializer {
     @Override
     public byte[] serialize(Object object) {
         PdxOutputStream pos = new PdxOutputStream();

@@ -1,21 +1,22 @@
 package memtest;
 
 import memtest.domain.Simple;
-import memtest.serializerfunctions.DataSerializerWholeObject;
+import memtest.serializerfunctions.AbstractSerializer;
 import memtest.serializerfunctions.KryoSerializer;
-import memtest.serializerfunctions.SerializerInterface;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientCacheFactory;
 import org.apache.geode.cache.client.ClientRegionShortcut;
 
+import java.io.IOException;
+
 public class WriteToGeodeMain {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         int numObjects = 10000;
 
         // Kryo: Starting Memory 72M + 94M, Ending Memory 130M + 313M
-        SerializerInterface serializer = new KryoSerializer();
+        AbstractSerializer serializer = new KryoSerializer();
 
         ClientCache cache = new ClientCacheFactory()
                 .addPoolLocator("localhost", 10334)

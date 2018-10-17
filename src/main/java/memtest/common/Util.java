@@ -1,16 +1,25 @@
 package memtest.common;
 
+import memtest.serializerfunctions.AbstractSerializer;
+import memtest.serializerfunctions.HBaseValueEncoder;
+import memtest.serializerfunctions.KryoSerializer;
+import org.apache.hadoop.hbase.util.Bytes;
+
+import java.io.IOException;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Random;
 
 public class Util {
 
+    static private AbstractSerializer serializer = new HBaseValueEncoder();
+
     static private Random r = new Random();
 
-
-    static public String newRandomString(byte length) {
+    static public String newRandomString(int length) {
         byte[] array = new byte[length];
         r.nextBytes(array);
         return new String(
@@ -23,7 +32,6 @@ public class Util {
 
 
     static public byte[] byteArraySlice(byte[] array, int start, int end) {
-
         return Arrays.copyOfRange(array, start, end);
     }
 
@@ -42,6 +50,35 @@ public class Util {
         System.arraycopy(b, 0, c, aLen, bLen);
 
         return c;
+    }
+
+    static public byte[] prependLength(byte[] ba) {
+        byte[] serializedLength = Bytes.toBytes((short)ba.length);
+        return Util.concatenateByteArrays(serializedLength, ba);
+    }
+
+
+    static public byte[] bigIntegerToBytes(BigInteger bi) {
+        return bi.toByteArray();
+    }
+
+
+    static public BigInteger bytesToBigInteger(byte[] ba) {
+        return new BigInteger(ba);
+    }
+
+
+    static public byte[] bigDecimalToBytes(BigDecimal bd) throws IOException {
+        byte[] unscaledBytes = bd.unscaledValue().toByteArray();
+        byte[] scaleBytes = serializer.serialize(bd.scale());
+        return Util.concatenateByteArrays(scaleBytes, unscaledBytes);
+    }
+
+
+    static public BigDecimal bytesToBigDecimal(byte[] ba) throws IOException, ClassNotFoundException {
+        int scale = (Integer)serializer.deserialize(Util.byteArraySlice(ba, 0, 4), int.class);
+        BigInteger bi = new BigInteger(Util.byteArraySlice(ba, 4, ba.length));
+        return new BigDecimal(bi, scale);
     }
 
 

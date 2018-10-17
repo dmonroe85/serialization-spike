@@ -1,15 +1,17 @@
 package memtest.serializerfunctions;
 
+import memtest.common.Util;
 import memtest.domain.Simple;
 import org.apache.geode.pdx.internal.PdxInputStream;
 import org.apache.geode.pdx.internal.PdxOutputStream;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-public class PdxSerializerSimpleByField implements SerializerInterface {
+public class PdxSerializerSimpleByField extends AbstractSerializer {
     @Override
-    public byte[] serialize(Object object) {
+    public byte[] serialize(Object object) throws IOException {
         Simple simple = (Simple)object;
 
         PdxOutputStream pos = new PdxOutputStream();
@@ -18,11 +20,11 @@ public class PdxSerializerSimpleByField implements SerializerInterface {
         pos.writeShort(simple.getShort());
         pos.writeInt(simple.getInt());
         pos.writeLong(simple.getLong());
-        pos.writeObject(simple.getBigInteger(), false);
+        pos.writeByteArray(Util.bigIntegerToBytes(simple.getBigInteger()));
 
         pos.writeFloat(simple.getFloat());
         pos.writeDouble(simple.getDouble());
-        pos.writeObject(simple.getBigDecimal(), false);
+        pos.writeByteArray(Util.bigDecimalToBytes(simple.getBigDecimal()));
 
         pos.writeString(simple.getString());
 
@@ -30,18 +32,18 @@ public class PdxSerializerSimpleByField implements SerializerInterface {
     }
 
     @Override
-    public Object deserialize(byte[] ba, Class cls) {
+    public Object deserialize(byte[] ba, Class cls) throws IOException, ClassNotFoundException{
         PdxInputStream pis = new PdxInputStream(ba);
 
         byte b = pis.readByte();
         short s = pis.readShort();
         int i = pis.readInt();
         long l = pis.readLong();
-        BigInteger bi = (BigInteger)pis.readObject();
+        BigInteger bi = Util.bytesToBigInteger(pis.readByteArray());
 
         float f = pis.readFloat();
         double d = pis.readDouble();
-        BigDecimal bd = (BigDecimal)pis.readObject();
+        BigDecimal bd = Util.bytesToBigDecimal(pis.readByteArray());
 
         String str = pis.readString();
 
