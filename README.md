@@ -18,4 +18,4 @@ This main evaluates several different types of serialization including PDX, Java
 
 ### WriteToGeodeMain
 
-Writes `Simple` (src/main/java/domain/Simple.java) objects to a local geode instance for testing.
+Writes `Simple` (src/main/java/memtest/domain/Simple.java) objects to a local geode instance for testing.
