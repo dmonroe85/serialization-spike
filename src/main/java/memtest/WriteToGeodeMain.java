@@ -23,7 +23,7 @@ public class WriteToGeodeMain {
 
         Region<String, byte[]> region = cache
                 .<String, byte[]>createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY_HEAP_LRU)
-                .create("hellop");
+                .create("hello");
 
         for (int i = 0; i < numObjects; i ++) {
             Simple s = new Simple();
@@ -31,8 +31,8 @@ public class WriteToGeodeMain {
 
             byte[] ba = serializer.serialize(sp);
             region.put(String.valueOf(i), ba);
-            byte[] queried = region.get(String.valueOf(i));
 
+            byte[] queried = region.get(String.valueOf(i));
             SimplePacked reconstructed = (SimplePacked)serializer.deserialize(queried, SimplePacked.class);
 
             if (!sp.equals(reconstructed)) {
