@@ -7,6 +7,7 @@ import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientCacheFactory;
 import org.apache.geode.cache.client.ClientRegionShortcut;
+import org.openjdk.jol.info.ClassLayout;
 
 import java.io.IOException;
 
@@ -23,7 +24,9 @@ public class WriteToGeodeMain {
 
         Region<String, byte[]> region = cache
                 .<String, byte[]>createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY_HEAP_LRU)
-                .create("hello");
+                .create("hello2");
+
+        long dataSize = 0;
 
         for (int i = 0; i < numObjects; i ++) {
             Simple s = new Simple();
@@ -38,7 +41,20 @@ public class WriteToGeodeMain {
             if (!sp.equals(reconstructed)) {
                 System.out.println("Unequal!");
             }
+
+            dataSize += ClassLayout.parseInstance(s).instanceSize();
+            dataSize += ClassLayout.parseInstance(s.getBigInteger()).instanceSize();
+            dataSize += ClassLayout.parseInstance(s.getBigInteger().toByteArray()).instanceSize();
+
+            dataSize += ClassLayout.parseInstance(s.getBigDecimal()).instanceSize();
+            dataSize += ClassLayout.parseInstance(s.getBigDecimal().unscaledValue()).instanceSize();
+            dataSize += ClassLayout.parseInstance(s.getBigDecimal().unscaledValue().toByteArray()).instanceSize();
+
+            dataSize += ClassLayout.parseInstance(s.getString()).instanceSize();
+            dataSize += ClassLayout.parseInstance(s.getString().toCharArray()).instanceSize();
         }
+
+        System.out.println(((double)dataSize) / (1024.0 * 1024.0));
 
         cache.close();
     }

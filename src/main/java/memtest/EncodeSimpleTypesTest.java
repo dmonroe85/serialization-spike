@@ -4,6 +4,7 @@ import memtest.domain.Simple;
 import memtest.domain.SimplePacked;
 import memtest.serializerfunctions.AbstractSerializer;
 import memtest.serializerfunctions.HBaseValueEncoder;
+import memtest.serializerfunctions.KryoSerializer;
 import org.openjdk.jol.info.ClassLayout;
 
 import java.io.IOException;
@@ -12,10 +13,11 @@ import java.math.BigInteger;
 
 public class EncodeSimpleTypesTest {
 
-    private static AbstractSerializer as = new HBaseValueEncoder();
+    private static AbstractSerializer hbs = new HBaseValueEncoder();
+    private static AbstractSerializer ks = new KryoSerializer();
 
     private static void test(Object o, byte[] hba) throws IOException {
-        byte[] kba = as.serialize(o);
+        byte[] kba = ks.serialize(o);
 
         System.out.println(o.getClass().getName());
         System.out.println(ClassLayout.parseInstance(o).toPrintable());
@@ -58,13 +60,13 @@ public class EncodeSimpleTypesTest {
 //        test(d, pu.doubleToBytes(d));
 
         BigInteger bi = new BigInteger("112341234112341234123421421342341234231423412341");
-        test(bi, as.serialize(bi));
+        test(bi, hbs.serialize(bi));
 
         BigDecimal bd = new BigDecimal("1.12341234112341234123421421342341234231423412341");
-        test(bd, as.serialize(bd));
+        test(bd, hbs.serialize(bd));
 
         String str = "sdfgsdfgsdfgsdfgs";
-        test(str, as.serialize(str));
+        test(str, hbs.serialize(str));
 
         Simple simple = new Simple(b, s, i, l, bi, f, d, bd, str);
         SimplePacked simplePacked = new SimplePacked(simple);
